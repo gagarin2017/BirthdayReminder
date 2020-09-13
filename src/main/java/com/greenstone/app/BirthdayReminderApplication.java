@@ -47,8 +47,8 @@ public class BirthdayReminderApplication implements CommandLineRunner {
         // save a single Person
  		repository.save(new Person("Ivan","Petrov", LocalDate.now()));
 
- 		log.info("Nobodys birthdays in near future. Exiting");
- 		System.exit(0);
+// 		log.info("Nobodys birthdays in near future. Exiting");
+// 		System.exit(0);
     }
 
 }
