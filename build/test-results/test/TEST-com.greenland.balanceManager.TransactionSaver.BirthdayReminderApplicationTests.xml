@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.greenland.balanceManager.TransactionSaver.BirthdayReminderApplicationTests" tests="1" skipped="1" failures="0" errors="0" timestamp="2020-09-13T14:01:50" hostname="DESKTOP-Q83RSA2" time="0.001">
+  <properties/>
+  <testcase name="contextLoads()" classname="com.greenland.balanceManager.TransactionSaver.BirthdayReminderApplicationTests" time="0.001">
+    <skipped/>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
