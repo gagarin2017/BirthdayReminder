@@ -29,9 +29,9 @@ public class Person {
 
 	@Column(name = "LASTNAME")
 	private String lastName;
-	
-	@Column(name = "DATEOFBIRTH")
-	private LocalDate dateOfBirth;
+//	
+//	@Column(name = "DATEOFBIRTH")
+//	private LocalDate dateOfBirth;
 
 	@Override
 	public String toString() {
@@ -42,7 +42,7 @@ public class Person {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.dateOfBirth = dateOfBirth;
+//		this.dateOfBirth = dateOfBirth;
 	}
 
 }
