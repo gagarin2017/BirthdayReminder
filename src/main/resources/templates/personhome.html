@@ -8,6 +8,11 @@
                     <td th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Name Error</td>
                 </tr>
                 <tr>
+                    <td>Last Name:</td>
+                    <td><input type="text" th:field="*{lastName}" /></td>
+                    <td th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Last name Error</td>
+                </tr>
+                <tr>
                     <td><button type="submit">Submit</button></td>
                 </tr>
             </table>
