@@ -25,7 +25,7 @@ public class BirthdayReminderController /* implements WebMvcConfigurer */ {
 	@Autowired
     private PersonService personService;
 	
-	@GetMapping("/")
+	@GetMapping(value={"/", "/personhome"})
 	public ModelAndView showHome() {
 		final ModelAndView modelAndView = new ModelAndView("personhome");
 		modelAndView.addObject("persons", personService.findAll());
@@ -33,15 +33,16 @@ public class BirthdayReminderController /* implements WebMvcConfigurer */ {
 	}
 	
 	@GetMapping("/addPerson")
-	public String showForm(Person person) {
+	public String showForm(final Person person) {
 		return "personform";
 	}
 	
-	@PostMapping("/")
+	@PostMapping("/personview")
 	public String checkPersonInfo(@Valid Person person, BindingResult bindingResult) {
 
 		if (bindingResult.hasErrors()) {
-			return "personhome";
+			System.err.println("\n\n\n Errors!\n\n\n"+bindingResult.getFieldError().getCode());
+			return "personform";
 		}
 
 		personService.updatePerson(person);
@@ -51,8 +52,7 @@ public class BirthdayReminderController /* implements WebMvcConfigurer */ {
 	@GetMapping("/update/person")
 	public String showPerson(@RequestParam String id, Model model) {
 		Optional<Person> person = personService.findById(Integer.valueOf(id));
-	    model.addAttribute("person", person.get()); 
-//		final ModelMap modelMap = new ModelMap("person", personService.findById(Integer.valueOf(id)));
+	    model.addAttribute("person", person.get());
 		return "personform";
 	}
 	
