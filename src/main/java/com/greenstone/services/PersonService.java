@@ -17,4 +17,6 @@ public interface PersonService {
  
     void deletePerson(Integer PersonId);
 
+    List<Person> personsWithBirthdaysDue();
+
 }
