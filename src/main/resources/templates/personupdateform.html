@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Birthday Reminder</title>
+    <title>Spring Boot Thymeleaf Application - Bootstrap Input Date</title>
 
     <link th:rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css}"/>
     <link th:rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.standalone.min.css}"/>
@@ -41,13 +41,43 @@
 </nav>
 
 <div class="container">
-    <h2 class="mt-5">First Name<strong th:text="${person.firstName}" ></strong></h2>
-    <h2 class="mt-5">Last Name<strong th:text="${person.lastName}" ></strong></h2>
-    <h2 class="mt-5">Date of birth<strong th:text="${#temporals.format(person.dateOfBirth, 'dd-MMM-yyyy')}" ></strong></h2>
 
-    <a th:href="@{/}" class="btn btn-primary">Вернуться к списку</a>
-    <a th:href="@{/addPerson}" class="btn btn-primary">Добавить День Рождения</a>
+<form method="post" th:object="${person}" action="#" th:action="@{/updatePersonForm}">
+    	
+	<div class="form-group">
+		<input type="hidden" class="form-control" id="id" aria-describedby="idHelp" placeholder="Id" th:field="*{id}">
+	</div>
+	<div class="form-group">
+		<label for="firstName">First Name</label>
+		<input type="text" class="form-control" id="firstName" aria-describedby="firstNameHelp" placeholder="First Name" th:field="*{firstName}">
+	</div>
+
+	<div class="form-group">
+		<label for="lastName">Last Name</label>
+		<input type="text" class="form-control" id="lastName" aria-describedby="lastNameHelp" placeholder="Last Name" th:field="*{lastName}">
+		<small id="lastNameHelp" class="form-text text-muted">Can be omitted</small>
+	</div>
+
+	<div class="form-group">
+		<label for="dateOfBirth">Date of birth</label>
+		<div class="input-group date">
+			<input type="text" class="form-control" id="dateOfBirth" autocomplete="off" th:field="*{dateOfBirth}" />
+				
+			<div class="input-group-append">
+				<span class="input-group-text">
+					<i class="far fa-calendar-alt"></i>
+				</span>
+			</div>
+		</div>
+	</div>
+
+<button class="btn btn-primary" type="submit">Обновить данные</button>
+<a th:href="@{/}" class="btn btn-primary">Вернуться к списку</a>
+
+</form>
+
 </div>
+
 
 <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js}"></script>
 <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.4.4/umd/popper.min.js}"></script>

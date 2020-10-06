@@ -45,27 +45,41 @@
 </nav>
 
 <div class="container">
-	<h1>List of Customers</h1>
-	<table>
+	<h1>С Днём Рождения!</h1>
+	
+	<table class="table" id="personList">
+	  <thead class="thead-light">
 	    <tr>
-	        <th>Id</th>
-	        <th>First Name</th>
-	        <th>Last Name</th>
-	        <th>Date of Birth</th>
-	        <th></th>
-	        <th></th>
+	      <th scope="col">Имя</th>
+	      <th scope="col">Фамилие</th>
+	      <th scope="col">День Рождения</th>
+	      <th scope="col">Сколько лет</th>
+	      <th scope="col">Месяцев до</th>
+	      <th scope="col" data-toggle="tooltip" data-placement="top" title="Примерно. Округлённое значение до целого числа">Недель до</th>
+	      <th scope="col">Всего дней до ДР</th>
+	      <th scope="col">Actions</th>
 	    </tr>
+	  </thead>
+	  <tbody>
 	    <tr th:each="person, custStat : ${persons}">
-	        <td th:text="${person.id}">1</td>
 	        <td th:text="${person.firstName}">John</td>
 	        <td th:text="${person.lastName}">Doe</td>
 	        <td><strong th:text="${#temporals.format(person.dateOfBirth, 'dd-MMM-yyyy')}" ></strong></td>
-	        <td><a th:href="@{/update/person(id=${person.id})}">Update</a></td>
-	        <td><a th:href="@{/delete/person(id=${person.id})}">Delete</a></td>
+	        <td th:text="${person.birthday.age}"></td>
+	        <td><span th:text="${person.birthday.monthsUntilBirthday}" /> месяц(-ев) и <span th:text="${person.birthday.daysUntilBirthday}" /> дней</td>
+	        <td th:text="${person.birthday.weeksUntilBirthday}"></td>
+	        <td th:text="${person.birthday.totalDaysUntilBirthday}"></td>
+	        <td>
+	       	<p>
+	       		<a th:href="@{/update/person(id=${person.id})}">Update</a>
+		        <a th:href="@{/delete/person(id=${person.id})}">Delete</a>
+	       	</p>
+	        </td>
 	    </tr>
+	  </tbody>
 	</table>
 
-    <a th:href="@{/}" class="btn btn-primary">Go back</a>
+    <a th:href="@{/addPerson}" class="btn btn-primary">Добавить День Рождения</a>
 </div>
 
 <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js}"></script>
@@ -78,6 +92,46 @@
         autoclose: true,
         todayHighlight: true
     });
+    
+    window.onload = function() {
+//     	  alert('Baaaac!');
+    	  sortTable()();
+    };
+    
+    function sortTable() {
+    	  var table, rows, switching, i, x, y, shouldSwitch;
+    	  table = document.getElementById("personList");
+    	  switching = true;
+    	  /* Make a loop that will continue until
+    	  no switching has been done: */
+    	  while (switching) {
+    	    // Start by saying: no switching is done:
+    	    switching = false;
+    	    rows = table.rows;
+    	    /* Loop through all table rows (except the
+    	    first, which contains table headers): */
+    	    for (i = 1; i < (rows.length - 1); i++) {
+    	      // Start by saying there should be no switching:
+    	      shouldSwitch = false;
+    	      /* Get the two elements you want to compare,
+    	      one from current row and one from the next: */
+    	      x = rows[i].getElementsByTagName("TD")[6];
+    	      y = rows[i + 1].getElementsByTagName("TD")[6];
+    	      // Check if the two rows should switch place:
+    	      if (parseInt(x.innerHTML, 10) > parseInt(y.innerHTML, 10)) {
+    	        // If so, mark as a switch and break the loop:
+    	        shouldSwitch = true;
+    	        break;
+    	      }
+    	    }
+    	    if (shouldSwitch) {
+    	      /* If a switch has been marked, make the switch
+    	      and mark that a switch has been done: */
+    	      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+    	      switching = true;
+    	    }
+    	  }
+    	}
 </script>
 
 </body>

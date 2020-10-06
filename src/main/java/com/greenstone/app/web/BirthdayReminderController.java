@@ -19,7 +19,7 @@ import com.greenstone.services.PersonService;
 
 @Controller
 @ComponentScan("com.greenstone.services")
-public class BirthdayReminderController /* implements WebMvcConfigurer */ {
+public class BirthdayReminderController {
 	
 	@Autowired
     private PersonService personService;
@@ -27,7 +27,7 @@ public class BirthdayReminderController /* implements WebMvcConfigurer */ {
 	@GetMapping(value={"/", "/personhome"})
 	public ModelAndView showHome() {
 		final ModelAndView modelAndView = new ModelAndView("personhome");
-		modelAndView.addObject("persons", personService.findAll());
+		modelAndView.addObject("persons", personService.findAllPersons());
 		return modelAndView;
 	}
 	
@@ -36,6 +36,7 @@ public class BirthdayReminderController /* implements WebMvcConfigurer */ {
 		return "personform";
 	}
 	
+	// TODO: fix binding results
 	@PostMapping("/personview")
 	public String checkPersonInfo(@Valid Person person, BindingResult bindingResult) {
 
@@ -48,18 +49,30 @@ public class BirthdayReminderController /* implements WebMvcConfigurer */ {
 		return "personview";
 	}
 	
+	@PostMapping("/updatePersonForm")
+	public String updatePerson(@Valid Person person, BindingResult bindingResult) {
+		
+		if (bindingResult.hasErrors()) {
+			System.err.println("\n\n\n Errors!\n\n\n"+bindingResult.getFieldError().getCode());
+			return "personform";
+		}
+		
+		personService.updatePerson(person);
+		return "personview";
+	}
+	
 	@GetMapping("/update/person")
 	public String showPerson(@RequestParam String id, Model model) {
-		Optional<Person> person = personService.findById(Integer.valueOf(id));
+		Optional<Person> person = personService.findPersonById(Integer.valueOf(id));
 	    model.addAttribute("person", person.get());
-		return "personform";
+		return "personupdateform";
 	}
 	
 	@GetMapping("/delete/person")
 	public ModelAndView deletePerson(@RequestParam String id) {
 		personService.deletePerson(Integer.valueOf(id));
 		final ModelAndView modelAndView = new ModelAndView("personhome");
-		modelAndView.addObject("persons", personService.findAll());
+		modelAndView.addObject("persons", personService.findAllPersons());
 		return modelAndView;
 	}
 	

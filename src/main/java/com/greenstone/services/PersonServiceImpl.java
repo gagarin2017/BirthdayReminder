@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
+import com.greenstone.domain.Birthday;
 import com.greenstone.domain.Person;
 import com.greenstone.repositories.PersonJPARepository;
 
@@ -18,27 +20,57 @@ import com.greenstone.repositories.PersonJPARepository;
 @EnableJpaRepositories("com.greenstone.repositories")
 public class PersonServiceImpl implements PersonService {
 	
+	@Value("${birthday.reminder.span}")
+	private int reminderSpan;
+	
 	@Autowired
 	private PersonJPARepository personRepository;
+	
+	@Autowired
+	private BirthdayService birthdayService;
 
 	@Override
-	public List<Person> findAll() {
+	public List<Person> findAllPersons() {
 		return personRepository.findAll();
 	}
 
 	@Override
-	public Optional<Person> findById(Integer personId) {
+	public Optional<Person> findPersonById(final Integer personId) {
 		return personRepository.findById(Long.valueOf(personId));
 	}
 
 	@Override
-	public Person savePerson(Person person) {
+	public Person savePerson(final Person person) {
 		return personRepository.save(person);
 	}
 
 	@Override
-	public Person updatePerson(Person person) {
-		return personRepository.save(person);
+	public Person updatePerson(final Person formPerson) {
+		Optional<Person> dbPersonToUpdate = findPersonById(Math.toIntExact(formPerson.getId()));
+		
+		if(dbPersonToUpdate.isPresent()) {
+			dbPersonToUpdate.get().setFirstName(formPerson.getFirstName());
+			dbPersonToUpdate.get().setLastName(formPerson.getLastName());
+			
+			if(isBirthDateChanged(formPerson, dbPersonToUpdate)) {
+				
+				dbPersonToUpdate.get().setDateOfBirth(formPerson.getDateOfBirth());
+				
+				birthdayService.updatePersonsBirthday(dbPersonToUpdate.get());
+				
+				//TODO: update Birthday too
+//				Optional<Person> dbPersonToUpdate = personRepository.findById(formPerson.getId());
+//				final Birthday newBirthday = generateBirthday(dbPersonToUpdate.get());
+//				dbPersonToUpdate.get().setBirthday(newBirthday);
+//				newBirthday.setPerson(formPerson);
+			}
+		}
+		
+		return personRepository.save(dbPersonToUpdate.get());
+	}
+	
+	private boolean isBirthDateChanged(final Person formPerson, Optional<Person> personToUpdate) {
+		return !personToUpdate.get().getDateOfBirth().equals(formPerson.getDateOfBirth());
 	}
 
 	@Override
@@ -51,17 +83,17 @@ public class PersonServiceImpl implements PersonService {
 	 *
 	 */
 	@Override
-	public List<Person> personsWithBirthdaysDue() {
+	public List<Person> personsWithBirthdaysDue(final List<Person> persons) {
 		
 		final List<Person> personsWithBirthdaysDue = new ArrayList<Person>();
 		
-		for (final Person person : findAll()) {
+		for (final Person person : persons) {
 			
-			if (isBirthdayDue(person)) {
+//			if (person.getBirthday().getTotalDaysUntilBirthday() < reminderSpan) {
+				if (person.getBirthday().getTotalDaysUntilBirthday() > 0) {
 				personsWithBirthdaysDue.add(person);
 			}
 		}
-		System.out.println("Persons with upcoming birthdays: "+personsWithBirthdaysDue.size());
 		return personsWithBirthdaysDue;
 	}
 
@@ -93,10 +125,31 @@ public class PersonServiceImpl implements PersonService {
 			System.out.println("There are " + p.getMonths() + " months, and " + p.getDays()
 					+ " days until your next birthday. (" + p2 + " total)");
 
-			isBirthdayDue = p2 == 53;
+			isBirthdayDue = p2 > 3;
 		}
 		
 		return isBirthdayDue;
+	}
+	
+	@Override
+	public List<Person> pullPersonsData() {
+		
+		final List<Person> persons = new ArrayList<Person>();
+		
+		for (final Person person : findAllPersons()) {
+			
+			if (person.getDateOfBirth() != null) {
+				final Birthday birthday = birthdayService.generateBirthday(person);
+				
+				person.setBirthday(birthday);
+				birthday.setPerson(person);
+				
+				personRepository.save(person);
+				persons.add(person);
+			}
+		}
+		
+		return persons;
 	}
 
 }

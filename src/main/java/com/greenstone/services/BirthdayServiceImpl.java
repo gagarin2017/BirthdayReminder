@@ -1,0 +1,62 @@
+package com.greenstone.services;
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.stereotype.Service;
+
+import com.greenstone.domain.Birthday;
+import com.greenstone.domain.Person;
+import com.greenstone.repositories.BirthdayJPARepository;
+
+@Service
+@EnableJpaRepositories("com.greenstone.repositories.BirthdayJPARepository")
+public class BirthdayServiceImpl implements BirthdayService {
+	
+	@Autowired
+	private BirthdayJPARepository birthdayJPARepository;
+
+	@Override
+	public Birthday generateBirthday(final Person person) {
+		final LocalDate dateOfBirth = person.getDateOfBirth();
+		final Birthday birthday = new Birthday();
+		
+		birthday.setPerson(person);
+		
+		final LocalDate today = LocalDate.now();
+		LocalDate nextBDay = dateOfBirth.withYear(today.getYear());
+
+		final Period age = Period.between(dateOfBirth, today);
+		birthday.setAge(age.getYears());
+
+		// If your birthday has occurred this year already, add 1 to the year.
+		if (nextBDay.isBefore(today) || nextBDay.isEqual(today)) {
+			nextBDay = nextBDay.plusYears(1);
+		}
+
+		final Period periodTillBirthday = Period.between(today, nextBDay);
+		final long daysTillBirthday = ChronoUnit.DAYS.between(today, nextBDay);
+		
+		birthday.setMonthsUntilBirthday(periodTillBirthday.getMonths());
+		birthday.setDaysUntilBirthday(periodTillBirthday.getDays());
+		birthday.setWeeksUntilBirthday((int) (daysTillBirthday / 7));
+		birthday.setTotalDaysUntilBirthday((int) daysTillBirthday);
+		
+//		System.out.println("There are " + periodTillBirthday.getMonths() + " months, and " + periodTillBirthday.getDays()
+//				+ " days until your next birthday. (" + daysTillBirthday + " total)");
+		
+		return birthday;
+	}
+
+	@Override
+	public void updatePersonsBirthday(Person person) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+
+}

@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 
+import com.greenstone.domain.Person;
 import com.greenstone.services.PersonService;
 
 /**
@@ -53,8 +55,14 @@ public class BirthdayReminderApplication implements CommandLineRunner {
         log.info("StartApplication...");
         log.info("Checking upcoming birthdays ...");
         
-		if (personService.personsWithBirthdaysDue().isEmpty()) {
+        final List<Person> persons = personService.pullPersonsData();
+        
+		if (personService.personsWithBirthdaysDue(persons).isEmpty()) {
+			log.info("==================================================");
+			log.info("==================================================");
 			log.info("Nobodys birthdays in near future. Exiting");
+			log.info("==================================================");
+			log.info("==================================================\n\n");
 			System.exit(0);
 		} else {
 			browseToWebapp();

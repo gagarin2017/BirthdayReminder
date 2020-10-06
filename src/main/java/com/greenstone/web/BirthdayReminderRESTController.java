@@ -27,7 +27,7 @@ public class BirthdayReminderRESTController {
  
     @GetMapping
     List<Person> getAllPersonList(){
-        return personService.findAll();
+        return personService.findAllPersons();
     }
  
     @PostMapping
@@ -47,6 +47,6 @@ public class BirthdayReminderRESTController {
  
     @GetMapping("/{personId}")
     Optional<Person> getPersonById(@PathVariable Integer personId){
-        return personService.findById(personId);
+        return personService.findPersonById(personId);
     }
 }

@@ -7,9 +7,9 @@ import com.greenstone.domain.Person;
 
 public interface PersonService {
 	
-    List<Person> findAll();
+    List<Person> findAllPersons();
     
-    Optional<Person> findById(Integer PersonId);
+    Optional<Person> findPersonById(Integer PersonId);
  
     Person savePerson(Person Person);
  
@@ -17,6 +17,8 @@ public interface PersonService {
  
     void deletePerson(Integer PersonId);
 
-    List<Person> personsWithBirthdaysDue();
+    List<Person> personsWithBirthdaysDue(List<Person> persons);
+    
+    public List<Person> pullPersonsData();
 
 }
