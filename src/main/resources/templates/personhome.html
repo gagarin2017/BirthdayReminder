@@ -95,43 +95,75 @@
     
     window.onload = function() {
 //     	  alert('Baaaac!');
-    	  sortTable()();
+    	  sortTable();
+    	  colorCodeTable();
     };
     
-    function sortTable() {
-    	  var table, rows, switching, i, x, y, shouldSwitch;
-    	  table = document.getElementById("personList");
-    	  switching = true;
-    	  /* Make a loop that will continue until
-    	  no switching has been done: */
-    	  while (switching) {
-    	    // Start by saying: no switching is done:
-    	    switching = false;
-    	    rows = table.rows;
-    	    /* Loop through all table rows (except the
-    	    first, which contains table headers): */
-    	    for (i = 1; i < (rows.length - 1); i++) {
-    	      // Start by saying there should be no switching:
-    	      shouldSwitch = false;
-    	      /* Get the two elements you want to compare,
-    	      one from current row and one from the next: */
-    	      x = rows[i].getElementsByTagName("TD")[6];
-    	      y = rows[i + 1].getElementsByTagName("TD")[6];
-    	      // Check if the two rows should switch place:
-    	      if (parseInt(x.innerHTML, 10) > parseInt(y.innerHTML, 10)) {
-    	        // If so, mark as a switch and break the loop:
-    	        shouldSwitch = true;
-    	        break;
-    	      }
-    	    }
-    	    if (shouldSwitch) {
-    	      /* If a switch has been marked, make the switch
-    	      and mark that a switch has been done: */
-    	      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-    	      switching = true;
-    	    }
-    	  }
-    	}
+
+	function colorCodeTable() {
+		var table = document.getElementById("personList");
+		var rows = table.rows;
+
+		for (i = 1; i < rows.length; i++) {
+
+			var column = rows[i].getElementsByTagName("TD")[6];
+			var daysTillBd = parseInt(column.innerHTML, 10);
+
+			// check if we need to color code the row
+			var tds = rows[i].getElementsByTagName("TD");
+
+			if (daysTillBd < 7) {
+				updateRowWithColor(tds, "red");
+			} else if (daysTillBd >= 7 && daysTillBd < 14) {
+				updateRowWithColor(tds, "blue");
+			} else if (daysTillBd >= 14 && daysTillBd < 30) {
+				updateRowWithColor(tds, "#00AA00");
+			}
+		}
+	}
+
+	function updateRowWithColor(tds, color) {
+		for (var i = 0, j = tds.length; i < j; ++i) {
+			tds[i].style.color = color;
+		}
+	}
+
+	function sortTable() {
+		var table, rows, switching, i, x, y, shouldSwitch;
+		table = document.getElementById("personList");
+		switching = true;
+		/* Make a loop that will continue until
+		no switching has been done: */
+		while (switching) {
+			// Start by saying: no switching is done:
+			switching = false;
+			rows = table.rows;
+			/* Loop through all table rows (except the
+			first, which contains table headers): */
+			for (i = 1; i < (rows.length - 1); i++) {
+				// Start by saying there should be no switching:
+				shouldSwitch = false;
+				/* Get the two elements you want to compare,
+				one from current row and one from the next: */
+				x = rows[i].getElementsByTagName("TD")[6];
+				y = rows[i + 1].getElementsByTagName("TD")[6];
+				var daysTillBd1 = parseInt(x.innerHTML, 10);
+				var daysTillBd2 = parseInt(y.innerHTML, 10);
+				// Check if the two rows should switch place:
+				if (daysTillBd1 > daysTillBd2) {
+					// If so, mark as a switch and break the loop:
+					shouldSwitch = true;
+					break;
+				}
+			}
+			if (shouldSwitch) {
+				/* If a switch has been marked, make the switch
+				and mark that a switch has been done: */
+				rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+				switching = true;
+			}
+		}
+	}
 </script>
 
 </body>
