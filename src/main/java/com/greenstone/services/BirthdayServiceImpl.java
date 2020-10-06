@@ -3,6 +3,7 @@ package com.greenstone.services;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -52,11 +53,24 @@ public class BirthdayServiceImpl implements BirthdayService {
 	}
 
 	@Override
-	public void updatePersonsBirthday(Person person) {
-		// TODO Auto-generated method stub
+	public void updatePersonsBirthday(final Person person) {
+		Optional<Birthday> dbBirthdayToUpdate = findBirthdayById(Math.toIntExact(person.getId()));
 		
+		final Birthday newBirthday = generateBirthday(person);
+		
+		if(dbBirthdayToUpdate.isPresent()) {
+			dbBirthdayToUpdate.get().setAge(newBirthday.getAge());
+			dbBirthdayToUpdate.get().setDaysUntilBirthday(newBirthday.getDaysUntilBirthday());
+			dbBirthdayToUpdate.get().setMonthsUntilBirthday(newBirthday.getMonthsUntilBirthday());
+			dbBirthdayToUpdate.get().setTotalDaysUntilBirthday(newBirthday.getTotalDaysUntilBirthday());
+			dbBirthdayToUpdate.get().setWeeksUntilBirthday(newBirthday.getWeeksUntilBirthday());
+			birthdayJPARepository.save(dbBirthdayToUpdate.get());
+		}		
 	}
 	
-	
+	@Override
+	public Optional<Birthday> findBirthdayById(final Integer birthdayId) {
+		return birthdayJPARepository.findById(Long.valueOf(birthdayId));
+	}
 
 }

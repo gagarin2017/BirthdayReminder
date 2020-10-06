@@ -34,7 +34,7 @@ public class Person {
 	
 	@Column(name = "FIRSTNAME")
 	@NotNull
-	@Size(min=2, max=30)
+	@Size(min=2, max=20)
 	private String firstName;
 
 	@Column(name = "LASTNAME")
@@ -52,7 +52,6 @@ public class Person {
 	
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "birthdayId")
-//	@Transient
 	private Birthday birthday;
 
 	public Person(String firstName, String lastName, LocalDate dateOfBirth) {

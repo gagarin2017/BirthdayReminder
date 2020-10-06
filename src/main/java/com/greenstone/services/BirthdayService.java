@@ -10,6 +10,8 @@ public interface BirthdayService {
 	Birthday generateBirthday(Person person);
 
 	void updatePersonsBirthday(Person person);
+
+	Optional<Birthday> findBirthdayById(Integer birthdayId);
 	
 
 }

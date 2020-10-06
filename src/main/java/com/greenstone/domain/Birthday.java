@@ -9,9 +9,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,37 +30,34 @@ public class Birthday {
 	private long id;
 	
 	@Column(name = "age")
-//	@NotNull
-//	@Min(0)
-//	@Max(100)
+	@NotNull
 	private int age;
 	
 	@Column(name = "monthsUntil")
-//	@NotNull
+	@NotNull
 	@Min(0)
 	@Max(12)
 	private int monthsUntilBirthday;
 
 	@Column(name = "weeksUntil")
-//	@NotNull
+	@NotNull
 	@Min(0)
 	@Max(53)
 	private int weeksUntilBirthday;
 
 	@Column(name = "daysUntil")
-//	@NotNull
+	@NotNull
 	@Min(0)
 	@Max(31)
 	private int daysUntilBirthday;
 
 	@Column(name = "totalDaysUntil")
-//	@NotNull
+	@NotNull
 	@Min(0)
 	@Max(365)
 	private int totalDaysUntilBirthday;
 	
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "birthday")
-//	@Transient
     private Person person;
 
 }
