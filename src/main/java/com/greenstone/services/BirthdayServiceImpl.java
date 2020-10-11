@@ -54,7 +54,7 @@ public class BirthdayServiceImpl implements BirthdayService {
 
 	@Override
 	public void updatePersonsBirthday(final Person person) {
-		Optional<Birthday> dbBirthdayToUpdate = findBirthdayById(Math.toIntExact(person.getId()));
+		Optional<Birthday> dbBirthdayToUpdate = findBirthdayById(Math.toIntExact(person.getBirthday().getId()));
 		
 		final Birthday newBirthday = generateBirthday(person);
 		

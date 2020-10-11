@@ -45,7 +45,7 @@ public class BirthdayReminderController {
 			return "personform";
 		}
 
-		personService.updatePerson(person);
+		personService.savePerson(person);
 		return "personview";
 	}
 	

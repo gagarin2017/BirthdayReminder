@@ -38,7 +38,16 @@ public class PersonServiceImpl implements PersonService {
 
 	@Override
 	public Person savePerson(final Person person) {
-		return personRepository.save(person);
+		return savePersonWithBirthday(person);
+	}
+
+	private Person savePersonWithBirthday(final Person person) {
+		final Person savedPerson;
+		final Birthday birthday = birthdayService.generateBirthday(person);
+		person.setBirthday(birthday);
+		birthday.setPerson(person);
+		savedPerson = personRepository.save(person);
+		return savedPerson;
 	}
 
 	@Override
@@ -80,8 +89,7 @@ public class PersonServiceImpl implements PersonService {
 		
 		for (final Person person : persons) {
 			
-//			if (person.getBirthday().getTotalDaysUntilBirthday() < reminderSpan) {
-				if (person.getBirthday().getTotalDaysUntilBirthday() > 0) {
+			if (person.getBirthday().getTotalDaysUntilBirthday() < reminderSpan) {
 				personsWithBirthdaysDue.add(person);
 			}
 		}
@@ -96,14 +104,18 @@ public class PersonServiceImpl implements PersonService {
 		for (final Person person : findAllPersons()) {
 			
 			if (person.getDateOfBirth() != null) {
-				final Birthday birthday = birthdayService.generateBirthday(person);
 				
-				person.setBirthday(birthday);
-				birthday.setPerson(person);
+				final Birthday birthday = person.getBirthday();
 				
-				personRepository.save(person);
-				persons.add(person);
+				if (birthday != null) {
+					System.out.println("Juras output "+birthday.getId());
+					if (birthday.getId() < 0) {
+						savePersonWithBirthday(person);
+					}
+				}
 			}
+
+			persons.add(person);
 		}
 		
 		return persons;
