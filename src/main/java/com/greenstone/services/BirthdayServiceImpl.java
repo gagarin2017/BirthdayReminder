@@ -31,7 +31,7 @@ public class BirthdayServiceImpl implements BirthdayService {
 		LocalDate nextBDay = dateOfBirth.withYear(today.getYear());
 
 		final Period age = Period.between(dateOfBirth, today);
-		birthday.setAge(age.getYears());
+		birthday.setAge(String.valueOf(age.getYears()));
 
 		// If your birthday has occurred this year already, add 1 to the year.
 		if (nextBDay.isBefore(today) || nextBDay.isEqual(today)) {
@@ -41,10 +41,10 @@ public class BirthdayServiceImpl implements BirthdayService {
 		final Period periodTillBirthday = Period.between(today, nextBDay);
 		final long daysTillBirthday = ChronoUnit.DAYS.between(today, nextBDay);
 		
-		birthday.setMonthsUntilBirthday(periodTillBirthday.getMonths());
-		birthday.setDaysUntilBirthday(periodTillBirthday.getDays());
-		birthday.setWeeksUntilBirthday((int) (daysTillBirthday / 7));
-		birthday.setTotalDaysUntilBirthday((int) daysTillBirthday);
+		birthday.setMonthsUntilBirthday(String.valueOf(periodTillBirthday.getMonths()));
+		birthday.setDaysUntilBirthday(String.valueOf(periodTillBirthday.getDays()));
+		birthday.setWeeksUntilBirthday(String.valueOf((int) (daysTillBirthday / 7)));
+		birthday.setTotalDaysUntilBirthday(String.valueOf((int) daysTillBirthday));
 		
 //		System.out.println("There are " + periodTillBirthday.getMonths() + " months, and " + periodTillBirthday.getDays()
 //				+ " days until your next birthday. (" + daysTillBirthday + " total)");

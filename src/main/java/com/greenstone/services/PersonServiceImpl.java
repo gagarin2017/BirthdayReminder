@@ -25,10 +25,20 @@ public class PersonServiceImpl implements PersonService {
 	
 	@Autowired
 	private BirthdayService birthdayService;
+	
+	@Autowired
+	private EncryptionService encryptionService;
 
 	@Override
 	public List<Person> findAllPersons() {
-		return personRepository.findAll();
+		
+		final List<Person> persons = new ArrayList<>();
+		
+		for (final Person person : personRepository.findAll()) {
+			persons.add(encryptionService.decrypt(person));
+		}
+		
+		return persons;
 	}
 
 	@Override
@@ -42,12 +52,16 @@ public class PersonServiceImpl implements PersonService {
 	}
 
 	private Person savePersonWithBirthday(final Person person) {
-		final Person savedPerson;
+		
+		final Person encryptedPerson = encryptionService.encrypt(person);
+		
 		final Birthday birthday = birthdayService.generateBirthday(person);
-		person.setBirthday(birthday);
-		birthday.setPerson(person);
-		savedPerson = personRepository.save(person);
-		return savedPerson;
+		final Birthday encryptedBirthday = encryptionService.encrypt(birthday);
+		
+		encryptedPerson.setBirthday(encryptedBirthday);
+		encryptedBirthday.setPerson(encryptedPerson);
+		
+		return personRepository.save(encryptedPerson);
 	}
 
 	@Override
@@ -89,7 +103,10 @@ public class PersonServiceImpl implements PersonService {
 		
 		for (final Person person : persons) {
 			
-			if (person.getBirthday().getTotalDaysUntilBirthday() < reminderSpan) {
+			final Birthday birthday = person.getBirthday();
+			final int totalDaysUntilBirthday = Integer.valueOf(encryptionService.decrypt(birthday.getTotalDaysUntilBirthday()));
+			
+			if (totalDaysUntilBirthday < reminderSpan) {
 				personsWithBirthdaysDue.add(person);
 			}
 		}
@@ -103,15 +120,14 @@ public class PersonServiceImpl implements PersonService {
 		
 		for (final Person person : findAllPersons()) {
 			
-			if (person.getDateOfBirth() != null) {
+			final Person decryptedPerson = encryptionService.decrypt(person);
+			
+			if (decryptedPerson.getDateOfBirth() != null) {
 				
-				final Birthday birthday = person.getBirthday();
+				final Birthday birthday = decryptedPerson.getBirthday();
 				
-				if (birthday != null) {
-					System.out.println("Juras output "+birthday.getId());
-					if (birthday.getId() < 0) {
-						savePersonWithBirthday(person);
-					}
+				if (birthday == null || birthday.getId() < 0) {
+					savePersonWithBirthday(person);
 				}
 			}
 

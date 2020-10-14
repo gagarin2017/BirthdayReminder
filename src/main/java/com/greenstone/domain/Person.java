@@ -12,8 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -34,17 +34,22 @@ public class Person {
 	
 	@Column(name = "FIRSTNAME")
 	@NotNull
-	@Size(min=2, max=20)
 	private String firstName;
 
+	
 	@Column(name = "LASTNAME")
 	private String lastName;
+
+	
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	@Transient
+	private LocalDate dateOfBirth;
 	
 	@Column(name = "DATEOFBIRTH")
 	@NotNull
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	private LocalDate dateOfBirth;
+	private String encryptedDOB;
 
+	
 	@Override
 	public String toString() {
 		return "First Name: " + firstName + ", Last Name: " + lastName +", DOB: "+dateOfBirth;

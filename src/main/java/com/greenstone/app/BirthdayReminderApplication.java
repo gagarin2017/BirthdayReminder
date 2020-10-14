@@ -57,16 +57,16 @@ public class BirthdayReminderApplication implements CommandLineRunner {
         
         final List<Person> persons = personService.pullPersonsData();
         
-		if (personService.personsWithBirthdaysDue(persons).isEmpty()) {
-			log.info("==================================================");
-			log.info("==================================================");
-			log.info("Nobodys birthdays in near future. Exiting");
-			log.info("==================================================");
-			log.info("==================================================\n\n");
-			System.exit(0);
-		} else {
+//		if (personService.personsWithBirthdaysDue(persons).isEmpty()) {
+//			log.info("==================================================");
+//			log.info("==================================================");
+//			log.info("Nobodys birthdays in near future. Exiting");
+//			log.info("==================================================");
+//			log.info("==================================================\n\n");
+//			System.exit(0);
+//		} else {
 			browseToWebapp();
-		}
+//		}
     }
 
 	private void browseToWebapp() {

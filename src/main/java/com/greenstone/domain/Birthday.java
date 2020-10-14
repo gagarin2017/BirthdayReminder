@@ -31,31 +31,23 @@ public class Birthday {
 	
 	@Column(name = "age")
 	@NotNull
-	private int age;
+	private String age;
 	
 	@Column(name = "monthsUntil")
 	@NotNull
-	@Min(0)
-	@Max(12)
-	private int monthsUntilBirthday;
+	private String monthsUntilBirthday;
 
 	@Column(name = "weeksUntil")
 	@NotNull
-	@Min(0)
-	@Max(53)
-	private int weeksUntilBirthday;
+	private String weeksUntilBirthday;
 
 	@Column(name = "daysUntil")
 	@NotNull
-	@Min(0)
-	@Max(31)
-	private int daysUntilBirthday;
+	private String daysUntilBirthday;
 
 	@Column(name = "totalDaysUntil")
 	@NotNull
-	@Min(0)
-	@Max(365)
-	private int totalDaysUntilBirthday;
+	private String totalDaysUntilBirthday;
 	
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "birthday")
     private Person person;
