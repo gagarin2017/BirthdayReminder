@@ -42,8 +42,9 @@ public class PersonServiceImpl implements PersonService {
 	}
 
 	@Override
-	public Optional<Person> findPersonById(final Integer personId) {
-		return personRepository.findById(Long.valueOf(personId));
+	public Person findPersonById(final Integer personId) {
+		final Optional<Person> dbPerson = personRepository.findById(Long.valueOf(personId));
+		return dbPerson.isEmpty() ? null : encryptionService.decrypt(dbPerson.get());
 	}
 
 	@Override
@@ -51,6 +52,15 @@ public class PersonServiceImpl implements PersonService {
 		return savePersonWithBirthday(person);
 	}
 
+	/**
+	 * Method persists {@link Person} to the database.
+	 * In cases when {@link Birthday} does#t exist for the person, then {@link Birthday is created}
+	 * 
+	 * Method encrypts all the data entities to be persisted on the database.
+	 * 
+	 * @param person - decrypted plain POJO {@link Person}
+	 * @return encrypted {@link Person}
+	 */
 	private Person savePersonWithBirthday(final Person person) {
 		
 		final Person encryptedPerson = encryptionService.encrypt(person);
@@ -66,25 +76,34 @@ public class PersonServiceImpl implements PersonService {
 
 	@Override
 	public Person updatePerson(final Person formPerson) {
-		Optional<Person> dbPersonToUpdate = findPersonById(Math.toIntExact(formPerson.getId()));
+		final Person dbPersonToUpdate = findPersonById(Math.toIntExact(formPerson.getId()));
 		
-		if(dbPersonToUpdate.isPresent()) {
-			dbPersonToUpdate.get().setFirstName(formPerson.getFirstName());
-			dbPersonToUpdate.get().setLastName(formPerson.getLastName());
+		if(dbPersonToUpdate != null) {
+			dbPersonToUpdate.setFirstName(formPerson.getFirstName());
+			dbPersonToUpdate.setLastName(formPerson.getLastName());
 			
 			if(isBirthDateChanged(formPerson, dbPersonToUpdate)) {
 				
-				dbPersonToUpdate.get().setDateOfBirth(formPerson.getDateOfBirth());
-				
-				birthdayService.updatePersonsBirthday(dbPersonToUpdate.get());
+				dbPersonToUpdate.setDateOfBirth(formPerson.getDateOfBirth());
+				dbPersonToUpdate.setBirthday(null);
+				final Birthday updatedBirthday = birthdayService.updatePersonsBirthday(dbPersonToUpdate);
+				dbPersonToUpdate.setBirthday(updatedBirthday);
 			}
 		}
 		
-		return personRepository.save(dbPersonToUpdate.get());
+		System.out.println("Person bd to update: "+ encryptionService.decrypt(dbPersonToUpdate.getBirthday()));
+		return personRepository.save(encryptionService.encrypt(dbPersonToUpdate));
 	}
 	
-	private boolean isBirthDateChanged(final Person formPerson, Optional<Person> personToUpdate) {
-		return !personToUpdate.get().getDateOfBirth().equals(formPerson.getDateOfBirth());
+	/**
+	 * When {@link Person} update is executed, we check if we need to update {@link Birthday} entity too.
+	 * 
+	 * @param formPerson - {@link Person} object from the update form
+	 * @param personToUpdate - the database object {@Person} which we are updating on the database.
+	 * @return true if date of Birth is changed and we need to update {@Birthday} entity
+	 */
+	private boolean isBirthDateChanged(final Person formPerson, Person personToUpdate) {
+		return !personToUpdate.getDateOfBirth().equals(formPerson.getDateOfBirth());
 	}
 
 	@Override
@@ -113,6 +132,11 @@ public class PersonServiceImpl implements PersonService {
 		return personsWithBirthdaysDue;
 	}
 
+	/**
+	 * Starter method. Pulls the data from the database and builds the {@link Birthday}s for each {@link Person}
+	 * if it doesn't exist.
+	 *
+	 */
 	@Override
 	public List<Person> pullPersonsData() {
 		
@@ -120,6 +144,7 @@ public class PersonServiceImpl implements PersonService {
 		
 		for (final Person person : findAllPersons()) {
 			
+			// Assume all persons on the database are encrypted
 			final Person decryptedPerson = encryptionService.decrypt(person);
 			
 			if (decryptedPerson.getDateOfBirth() != null) {

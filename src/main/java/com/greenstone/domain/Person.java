@@ -46,7 +46,6 @@ public class Person {
 	private LocalDate dateOfBirth;
 	
 	@Column(name = "DATEOFBIRTH")
-	@NotNull
 	private String encryptedDOB;
 
 	

@@ -33,7 +33,7 @@ import com.greenstone.services.PersonService;
 @EntityScan("com.greenstone.domain")
 public class BirthdayReminderApplication implements CommandLineRunner {
 
-	private static final String LOCAL_URL = "http://localhost:8080";
+	private static final String LOCAL_URL = "http://localhost:8330";
 
 	@Autowired
 	private PersonService personService;

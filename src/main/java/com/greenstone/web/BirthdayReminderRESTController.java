@@ -46,7 +46,7 @@ public class BirthdayReminderRESTController {
     }
  
     @GetMapping("/{personId}")
-    Optional<Person> getPersonById(@PathVariable Integer personId){
+    Person getPersonById(@PathVariable Integer personId){
         return personService.findPersonById(personId);
     }
 }

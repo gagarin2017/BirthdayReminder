@@ -9,7 +9,7 @@ public interface BirthdayService {
 
 	Birthday generateBirthday(Person person);
 
-	void updatePersonsBirthday(Person person);
+	Birthday updatePersonsBirthday(Person person);
 
 	Optional<Birthday> findBirthdayById(Integer birthdayId);
 	

@@ -36,6 +36,7 @@ public class TextEncryptionService implements EncryptionService {
 	@Override
 	public Person decrypt(final Person person) {
 		final Person decryptedPerson = new Person();
+		decryptedPerson.setId(person.getId());
 		decryptedPerson.setFirstName(decrypt(person.getFirstName()));
 		decryptedPerson.setLastName(decrypt(person.getLastName()));
 		decryptedPerson.setDateOfBirth(LocalDate.parse(decrypt(person.getEncryptedDOB())));
@@ -47,8 +48,10 @@ public class TextEncryptionService implements EncryptionService {
 		return decryptedPerson;
 	}
 
-	private Birthday decrypt(final Birthday birthday) {
+	@Override
+	public Birthday decrypt(final Birthday birthday) {
 		final Birthday decryptedBirthday = new Birthday();
+		decryptedBirthday.setId(birthday.getId());
 		decryptedBirthday.setAge(decrypt(birthday.getAge()));
 		decryptedBirthday.setDaysUntilBirthday(decrypt(birthday.getDaysUntilBirthday()));
 		decryptedBirthday.setMonthsUntilBirthday(decrypt(birthday.getMonthsUntilBirthday()));
@@ -60,17 +63,20 @@ public class TextEncryptionService implements EncryptionService {
 	@Override
 	public Birthday encrypt(final Birthday birthday) {
 		final Birthday encryptedBirthday = new Birthday();
+		encryptedBirthday.setId(birthday.getId());
 		encryptedBirthday.setAge(encrypt(birthday.getAge()));
 		encryptedBirthday.setDaysUntilBirthday(encrypt(birthday.getDaysUntilBirthday()));
 		encryptedBirthday.setMonthsUntilBirthday(encrypt(birthday.getMonthsUntilBirthday()));
 		encryptedBirthday.setTotalDaysUntilBirthday(encrypt(birthday.getTotalDaysUntilBirthday()));
 		encryptedBirthday.setWeeksUntilBirthday(encrypt(birthday.getWeeksUntilBirthday()));
+		encryptedBirthday.setPerson(birthday.getPerson());
 		return encryptedBirthday;
 	}
 
 	@Override
 	public Person encrypt(final Person person) {
 		final Person encryptedPerson = new Person();
+		encryptedPerson.setId(person.getId());
 		encryptedPerson.setFirstName(encrypt(person.getFirstName()));
 		encryptedPerson.setLastName(encrypt(person.getLastName()));
 		encryptedPerson.setEncryptedDOB(encrypt(person.getDateOfBirth().toString()));

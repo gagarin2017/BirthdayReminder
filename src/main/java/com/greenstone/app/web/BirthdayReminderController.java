@@ -1,7 +1,5 @@
 package com.greenstone.app.web;
 
-import java.util.Optional;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,8 +61,8 @@ public class BirthdayReminderController {
 	
 	@GetMapping("/update/person")
 	public String showPerson(@RequestParam String id, Model model) {
-		Optional<Person> person = personService.findPersonById(Integer.valueOf(id));
-	    model.addAttribute("person", person.get());
+		Person person = personService.findPersonById(Integer.valueOf(id));
+		model.addAttribute("person", person);
 		return "personupdateform";
 	}
 	

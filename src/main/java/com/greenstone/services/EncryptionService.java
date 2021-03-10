@@ -11,9 +11,12 @@ public interface EncryptionService {
 
 	String encrypt(int value);
 
+	Person encrypt(Person person);
+
 	Person decrypt(Person person);
 
 	Birthday encrypt(Birthday birthday);
+	
+	Birthday decrypt(Birthday birthday);
 
-	Person encrypt(Person person);
 }

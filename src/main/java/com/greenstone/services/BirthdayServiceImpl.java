@@ -19,6 +19,9 @@ public class BirthdayServiceImpl implements BirthdayService {
 	
 	@Autowired
 	private BirthdayJPARepository birthdayJPARepository;
+	
+	@Autowired
+	private EncryptionService encryptionService;
 
 	@Override
 	public Birthday generateBirthday(final Person person) {
@@ -53,19 +56,20 @@ public class BirthdayServiceImpl implements BirthdayService {
 	}
 
 	@Override
-	public void updatePersonsBirthday(final Person person) {
+	public Birthday updatePersonsBirthday(final Person person) {
 		Optional<Birthday> dbBirthdayToUpdate = findBirthdayById(Math.toIntExact(person.getBirthday().getId()));
 		
-		final Birthday newBirthday = generateBirthday(person);
-		
 		if(dbBirthdayToUpdate.isPresent()) {
+			final Birthday newBirthday = generateBirthday(person);
+			
 			dbBirthdayToUpdate.get().setAge(newBirthday.getAge());
 			dbBirthdayToUpdate.get().setDaysUntilBirthday(newBirthday.getDaysUntilBirthday());
 			dbBirthdayToUpdate.get().setMonthsUntilBirthday(newBirthday.getMonthsUntilBirthday());
 			dbBirthdayToUpdate.get().setTotalDaysUntilBirthday(newBirthday.getTotalDaysUntilBirthday());
 			dbBirthdayToUpdate.get().setWeeksUntilBirthday(newBirthday.getWeeksUntilBirthday());
-			birthdayJPARepository.save(dbBirthdayToUpdate.get());
-		}		
+		}
+		
+		return dbBirthdayToUpdate.isEmpty() ? null : birthdayJPARepository.save(encryptionService.encrypt(dbBirthdayToUpdate.get()));
 	}
 	
 	@Override
